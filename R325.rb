@@ -148,7 +148,7 @@ class R325 < Formula
         s.gsub! /.LDFLAGS =.*/, "\\0 $(LDFLAGS)"
       end
 
-      bash_completion.install resource("completion")
+      #bash_completion.install resource("completion")
 
       prefix.install "make-check.log" if build.with? "check"
     end
