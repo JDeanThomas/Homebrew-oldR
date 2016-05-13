@@ -56,7 +56,7 @@ class R325 < Formula
     #url "https://rcompletion.googlecode.com/svn-history/r31/trunk/bash_completion/R", :using => :curl
     #sha256 "2b5cac905ab5dd4889e8a356bbdf2dddff60f718a4104b169e48ca856716e705"
     #version "r31"
-  end
+ # end
 
   patch :DATA
 
