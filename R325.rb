@@ -4,7 +4,7 @@ class RDownloadStrategy < SubversionDownloadStrategy
   end
 end
 
-class R < Formula
+class R325 < Formula
   desc "Software environment for statistical computing"
   homepage "http://www.r-project.org/"
   url "http://cran.rstudio.com/src/base/R-3/R-3.2.5.tar.gz"
