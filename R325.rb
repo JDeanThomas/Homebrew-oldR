@@ -71,7 +71,7 @@ class R325 < Formula
     ]
     
     # Append appropriate GCC settings to environment
-    if ENV.compiler == :gcc
+    if ENV.compiler != :clang
       ENV["FC"] = "gfortran"
       ENV["F77"] = "gfortran"
       # Link to current install GCC. Only applies to major version
