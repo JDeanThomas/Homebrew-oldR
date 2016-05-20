@@ -70,7 +70,7 @@ class R325 < Formula
       "--enable-memory-profiling",
     ]
     
-    # Append appropriate GCC detting to environment
+    # Append appropriate GCC settings to environment
     if ENV.compiler == :gcc
       ENV["FC"] = "gfortran"
       ENV["F77"] = "gfortran"
@@ -79,11 +79,13 @@ class R325 < Formula
       # ENV.insert_to_FLIBS(0, "-L/usr/local/opt/gcc/lib/gcc/5/"  
       # Add Fortran comiler flags to enviroment 
       ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
-      ENV.append "FFFLAGS", "-Wall -march=native -g -O2"
+      ENV.append "FFLAGS", "-Wall -march=native -g -O2"
       # Add C/C++ compiler flags to the environment
-      ENV["CFLAGS"] = "-Wall -march=native -g -O1" 
-      ENV.append "CXXFLAGs", "-Wall -march=native -g -O2" 
-      ENV.append "CXX1XFLAGs", "-Wall -march=native -g -O2"       
+      #ENV["CFLAGS"] = "-Wall -march=native -g -O1" 
+      #ENV.append "CXXFLAGs", "-Wall -march=native -g -O2" 
+      #ENV.append "CXX1XFLAGs", "-Wall -march=native -g -O2"
+      ENV.append_to_cflags "-Wall -march=native -g -O2"
+      print = "using GC"        
     end
 
     if OS.linux?
