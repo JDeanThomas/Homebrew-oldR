@@ -71,9 +71,9 @@ class R325 < Formula
     ]
     
     # Append appropriate GCC detting to environment
-    if ENV.compiler == :gcc-5
-      ENV.append "FC", "gfortran"
-      ENV.append "F77", "gfortran"
+    if ENV.compiler == :gcc
+      ENV["FC"] = "gfortran"
+      ENV["F77"] = "gfortran"
       # Link to current install GCC. Only applies to major version
       # currently so disabled 
       # ENV.insert_to_FLIBS(0, "-L/usr/local/opt/gcc/lib/gcc/5/"  
