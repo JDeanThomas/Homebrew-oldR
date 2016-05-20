@@ -84,7 +84,7 @@ class R325 < Formula
       ENV["CFLAGS"] = "-Wall -march=native -g -O1" 
       ENV.append "CXXFLAGs", "-Wall -march=native -g -O2" 
       ENV.append "CXX1XFLAGs", "-Wall -march=native -g -O2"       
-      end
+    end
 
     if OS.linux?
       args << "--libdir=#{lib}" # avoid using lib64 on CentOS
@@ -116,7 +116,7 @@ class R325 < Formula
       ENV.append "LDFLAGS", "-L#{Formula["openblas"].opt_lib}"
     elsif build.with? "accelerate"
       args << "--with-blas=-framework Accelerate" << "--with-lapack"
-      ENV.append_to_cflags "-D__ACCELERATE__ -Wall -march=native -g -O2" if ENV.compiler != :clang
+      ENV.append_to_cflags "-D__ACCELERATE__" if ENV.compiler != :clang
       # Fall back to Rblas without-accelerate or -openblas
     end
 
