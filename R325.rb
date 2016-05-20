@@ -78,10 +78,10 @@ class R325 < Formula
       # currently so disabled 
       # ENV.insert_to_FLIBS(0, "-L/usr/local/opt/gcc/lib/gcc/5/"  
       # Add Fortran comiler flags to enviroment 
-      ENV.append "FCFLAGS"," -Wall -march=native -g -O2"
+      ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
       ENV.append "FFFLAGS", "-Wall -march=native -g -O2"
       # Add C/C++ compiler flags to the environment
-      ENV.append "CFLAGS", "-Wall -march=native -g -O2" 
+      EENV["CFLAGS"] = "-Wall -march=native -g -O2" 
       ENV.append "CXXFLAGs", "-Wall -march=native -g -O2" 
       ENV.append "CXX1XFLAGs", "-Wall -march=native -g -O2"       
       end
