@@ -90,15 +90,15 @@ class R325 < Formula
       #ENV.append "CXX1XFLAGs", "-Wall -march=native -g -O2"
       #ENV.append "OBJCFLAGS", "-Wall -march=native -g -O2"
       ENV.append_to_cflags "-Wall -march=native -g -O2"
-    else 
+      #else 
       # Set GCC gfortran as fortrain compiler
-      ENV["FC"] = "gfortran"
-      ENV["F77"] = "gfortran"  
+      #ENV["FC"] = "gfortran"
+      #ENV["F77"] = "gfortran"  
       # Add Fortran compiler flags to enviroment 
-      ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
-      ENV["FFLAGS"] = "-Wall -march=native -g -O2"
+      #ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
+      #ENV["FFLAGS"] = "-Wall -march=native -g -O2"
       # Add C/C++ compiler flags to the environment
-      ENV.append_to_cflags "-Wall -march=native -g -O2"        
+      #ENV.append_to_cflags "-Wall -march=native -g -O2"        
     end
 
     if OS.linux?
