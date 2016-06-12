@@ -45,8 +45,8 @@ class R325 < Formula
   depends_on "openblas" => :optional
   depends_on "pango" => :optional
   depends_on "valgrind" => :optional
-  #depends_on :x11 => (OS.mac? ? :optional : :recommended)
-  depends_on :x11 => :recommended
+  depends_on :x11 => (OS.mac? ? :optional : :recommended)
+  #depends_on :x11 => :recommended
 
   cairo_opts = build.with?("x11") ? ["with-x11"] : []
   cairo_opts << :optional if OS.linux?
