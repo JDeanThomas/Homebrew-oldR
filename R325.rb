@@ -111,14 +111,18 @@ class R325 < Formula
       args << "--enable-R-framework"
       args << "--with-cairo"
 
+      # This has been depreciates. We are now using Clang as
+      # ObjectiveC complier irrespective of selected compiler
+      # So should no longer be an issue
+      
       # Disable building against the Aqua framework with CLT >= 6.0.
       # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63651
       # This should be revisited when new versions of GCC come along.
-      if ENV.compiler != :clang && MacOS::CLT.version >= "6.0"
-        args << "--without-aqua"
-      else
-        args << "--with-aqua"
-      end
+      #if ENV.compiler != :clang && MacOS::CLT.version >= "6.0"
+        #args << "--without-aqua"
+        #else
+        #args << "--with-aqua"
+        #end
     end
 
     if build.with? "valgrind"
