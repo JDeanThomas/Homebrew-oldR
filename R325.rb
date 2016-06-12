@@ -45,7 +45,8 @@ class R325 < Formula
   depends_on "openblas" => :optional
   depends_on "pango" => :optional
   depends_on "valgrind" => :optional
-  depends_on :x11 => (OS.mac? ? :optional : :recommended)
+  #depends_on :x11 => (OS.mac? ? :optional : :recommended)
+  depends_on :x11 => :recommended
 
   cairo_opts = build.with?("x11") ? ["with-x11"] : []
   cairo_opts << :optional if OS.linux?
@@ -72,20 +73,32 @@ class R325 < Formula
     
     # Append appropriate GCC settings to environment
     if ENV.compiler != :clang
+      # Set Clang (Xcode tools) for ObjectiveC. Apple is standard.
+      ENV["OBJC"] = "clang"
+      # Set GCC gfortran as fortrain compiler
       ENV["FC"] = "gfortran"
       ENV["F77"] = "gfortran"
       # Link to current install GCC. Only applies to major version
       # currently so disabled 
       # ENV.insert_to_FLIBS(0, "-L/usr/local/opt/gcc/lib/gcc/5/"  
-      # Add Fortran comiler flags to enviroment 
+      # Add Fortran compiler flags to enviroment 
       ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
-      ENV.append "FFLAGS", "-Wall -march=native -g -O2"
+      ENV["FFLAGS"] = "-Wall -march=native -g -O2"
       # Add C/C++ compiler flags to the environment
-      #ENV["CFLAGS"] = "-Wall -march=native -g -O1" 
+      #ENV.append "CFLAGS", "-Wall -march=native -g -O1" 
       #ENV.append "CXXFLAGs", "-Wall -march=native -g -O2" 
       #ENV.append "CXX1XFLAGs", "-Wall -march=native -g -O2"
+      #ENV.append "OBJCFLAGS", "-Wall -march=native -g -O2"
       ENV.append_to_cflags "-Wall -march=native -g -O2"
-      print = "using GC"        
+    else 
+      # Set GCC gfortran as fortrain compiler
+      ENV["FC"] = "gfortran"
+      ENV["F77"] = "gfortran"  
+      # Add Fortran compiler flags to enviroment 
+      ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
+      ENV["FFLAGS"] = "-Wall -march=native -g -O2"
+      # Add C/C++ compiler flags to the environment
+      ENV.append_to_cflags "-Wall -march=native -g -O2"        
     end
 
     if OS.linux?
