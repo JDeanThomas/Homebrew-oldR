@@ -116,7 +116,7 @@ class R325 < Formula
       # Disable building against the Aqua framework with CLT >= 6.0.
       # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63651
       # This should be revisited when new versions of GCC come along.
-      if ENV.compiler != :clang && MacOS::CLT.version >= "6.0"
+      if ENV.compiler != :clang && MacOS::CLT.version >= "6.0" && MacOS::CLT.version <= "7.0"
         args << "--without-aqua"
       else
         args << "--with-aqua"
