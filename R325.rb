@@ -26,10 +26,13 @@ class R325 < Formula
     depends_on :tex
   end
 
+  option "without-shared-BLAS", "Build BLAS as a static library"
   option "without-accelerate", "Build without the Accelerate framework (use Rblas)"
   option "without-check", "Skip build-time tests (not recommended)"
   option "without-tcltk", "Build without Tcl/Tk"
   option "with-librmath-only", "Only build standalone libRmath library"
+  option "with-llvm-clang", "Compile using llvm Clang instead of Apple Clang"
+  option "with-clang-omp", "Compile using OpenMP extension library for Clang"
 
   depends_on "pkg-config" => :build
   depends_on "texinfo" => :build
@@ -59,8 +62,8 @@ class R325 < Formula
     #version "r31"
  # end
 
-  patch :DATA
-
+  patch :DATA  
+  
   def install
     # Fix cairo detection with Quartz-only cairo
     inreplace ["configure", "m4/cairo.m4"], "cairo-xlib.h", "cairo.h"
@@ -71,34 +74,52 @@ class R325 < Formula
       "--enable-memory-profiling",
     ]
     
-    # Append appropriate GCC settings to environment
-    if ENV.compiler != :clang
-      # Set Clang (Xcode tools) for ObjectiveC. Apple is standard.
-      ENV["OBJC"] = "clang"
-      # Set GCC gfortran as fortrain compiler
+    if ENV.compiler == /^clang-3.8/
+      puts ENV.cc
+      puts ENV.compiler 
+      abort("Tiiiiiiiight!")
+    end
+    
+    # Set global compiler deafualts if using Clang or GNU GCC
+    if ENV.compiler =~ /^gcc-/ || ENV.compiler == :clang || ENV.compiler == /^clang-/
+      # Set GCC gfortran as fortran compiler
       ENV["FC"] = "gfortran"
-      ENV["F77"] = "gfortran"
-      # Link to current install GCC. Only applies to major version
-      # currently so disabled 
-      # ENV.insert_to_FLIBS(0, "-L/usr/local/opt/gcc/lib/gcc/5/"  
+      ENV["F77"] = "gfortran"  
       # Add Fortran compiler flags to enviroment 
       ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
       ENV["FFLAGS"] = "-Wall -march=native -g -O2"
       # Add C/C++ compiler flags to the environment
-      #ENV.append "CFLAGS", "-Wall -march=native -g -O1" 
-      #ENV.append "CXXFLAGs", "-Wall -march=native -g -O2" 
-      #ENV.append "CXX1XFLAGs", "-Wall -march=native -g -O2"
-      #ENV.append "OBJCFLAGS", "-Wall -march=native -g -O2"
       ENV.append_to_cflags "-Wall -march=native -g -O2"
-    else 
-    # Set GCC gfortran as fortrain compiler
-    ENV["FC"] = "gfortran"
-    ENV["F77"] = "gfortran"  
-      # Add Fortran compiler flags to enviroment 
-      #ENV["FCFLAGS"] = " -Wall -march=native -g -O2"
-      #ENV["FFLAGS"] = "-Wall -march=native -g -O2"
-      # Add C/C++ compiler flags to the environment
-    ENV.append_to_cflags "-Wall -march=native -g -O2"        
+    # Fall back to defaults of compiler if neither Clang
+    # nor GNU GCC. Pass argument --env-std to use non-Homebrew
+    # (standard) environment as pass appropriate args for build
+    end
+    
+    # Additional compliler specific settings
+    # If using GNU (non-Apple) GCC version
+    if ENV.compiler =~ /^gcc-/
+      # Set Clang (Xcode tools) for ObjectiveC. Apple is standard.
+      ENV["OBJC"] = "clang"
+      ENV["OBJCXX"] = "clang"  
+    # Arguments for LLVM (non-Apple) Clang
+    elsif build.with? "llvm-clang"
+      ENV["CC"] = "clang-3.8"
+      ENV["CXX"] = "clang-3.8++"
+      
+    # Arguments for built in (Apple) Clang with Clang-OMP 
+    # C/C++ external library extensions (based on Clang 3.5) 
+    elsif build.with? "clang-omp" 
+      # Set C/C++ to OpenMP enabled Clang extansion
+      ENV["CC"] = "clang-omp"
+      ENV["CXX"] = "clang-omp++"
+      # Add aditional OpenMP compiler dirrectives
+      ENV.append "DYLIB_LDFLAGS", "-fopenmp" 
+      ENV.append "MAIN_LDFLAGS ", "-fopenmp"
+      #ENV.append "SHLIB_OPENMP_CFLAGS", "-fopenmp"
+      #ENV.append "SHLIB_OPENMP_CXXFLAGS", "-fopenmp"
+      ENV.append "SHLIB_OPENMP_FCFLAGS", "-fopenmp"
+      ENV.append "SHLIB_OPENMP_FFLAGS", "-fopenmp"
+    # Fallback to global defaults for standard Clang    
     end
 
     if OS.linux?
@@ -131,9 +152,13 @@ class R325 < Formula
     if build.with? "openblas"
       args << "--with-blas=-L#{Formula["openblas"].opt_lib} -lopenblas" << "--with-lapack"
       ENV.append "LDFLAGS", "-L#{Formula["openblas"].opt_lib}"
+      # Defualt to BLAS as shared lib. R Binary standard for Rblas.
+      #args << "--enable-BLAS-shlib" if build.with? "shared-BLAS"
     elsif build.with? "accelerate"
       args << "--with-blas=-framework Accelerate" << "--with-lapack"
       ENV.append_to_cflags "-D__ACCELERATE__" if ENV.compiler != :clang
+      # Defualt to BLAS as shared lib. R Binary standard for Rblas.
+      args << "--enable-BLAS-shlib" if build.with? "shared-BLAS"
       # Fall back to Rblas without-accelerate or -openblas
     end
 
@@ -256,3 +281,4 @@ index ffc18e4..6728244 100644
  #include <AvailabilityMacros.h> /* for MAC_OS_X_VERSION_10_* -- present on 10.2+ (according to Apple) */
  /* Since OS X 10.8 vecLib requires Accelerate to be included first (which in turn includes vecLib) */
  #if defined MAC_OS_X_VERSION_10_8 && MAC_OS_X_VERSION_MIN_REQUIRED >= 1040
+    
